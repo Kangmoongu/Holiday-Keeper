@@ -34,7 +34,31 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
+
+    // QueryDsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
+
+// QueryDsl : 자동 생성 소스 파일 저장 위치
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+// QueryDsl : 자동 생성 소스 파일 gradle clean으로 제거
+clean {
+    delete file(querydslDir);
+}
+
+//QueryDsl : 자바 컴파일할때, 자동 생성된 Q 클래스를 querydslSrcDir 경로에 생성
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory = file(querydslDir)
+    options.encoding = 'UTF-8'
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()
