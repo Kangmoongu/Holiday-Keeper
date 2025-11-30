@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/holiday")
 @RequiredArgsConstructor
 @Slf4j
-public class HolidayController {
+public class HolidayController implements HolidayApi{
 
     private final HolidayKeeperService holidayKeeperService;
 

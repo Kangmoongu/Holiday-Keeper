@@ -34,6 +34,6 @@ public interface HolidayApi {
             )
         )
     })
-    ResponseEntity<String> loadHolidays();
+    ResponseEntity<String> save();
 
 }
