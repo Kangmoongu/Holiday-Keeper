@@ -1,4 +1,4 @@
-package com.mapper;
+package com.holidaykeeper.mapper;
 
 
 import com.holidaykeeper.dto.HolidayDto;
