@@ -3,6 +3,7 @@ package com.holidaykeeper.config;
 import com.holidaykeeper.dto.CountryDto;
 import com.holidaykeeper.entity.Country;
 import com.holidaykeeper.repository.CountryRepository;
+import com.holidaykeeper.service.HolidayKeeperService;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class HolidayKeeperInitializer implements ApplicationRunner {
 
     private final RestTemplate restTemplate;
     private final CountryRepository countryRepository;
+    private final HolidayKeeperService  holidayKeeperService;
 
     private static final String COUNTRY_API_URL = "https://date.nager.at/api/v3/AvailableCountries";
 
@@ -77,11 +79,14 @@ public class HolidayKeeperInitializer implements ApplicationRunner {
                 log.info("[HolidayKeeperInitializer] No new countries to save");
             }
 
-            log.info("[HolidayKeeperInitializer] Country data initialization completed successfully");
+            log.info("[HolidayKeeperInitializer] Starting holiday data initialization");
+            holidayKeeperService.save();
+            log.info("[HolidayKeeperInitializer] End holiday data initialization");
+
+            log.info("[HolidayKeeperInitializer] initialization completed successfully");
 
         } catch (Exception e) {
             log.error("[HolidayKeeperInitializer] Failed to initialize country data: {}", e.getMessage(), e);
-            // 국가 데이터 초기화 실패는 치명적이지 않으므로 예외를 다시 던지지 않음
         }
     }
 }
