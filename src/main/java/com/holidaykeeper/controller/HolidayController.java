@@ -1,6 +1,8 @@
 package com.holidaykeeper.controller;
 
 
+import com.holidaykeeper.repository.CountryRepository;
+import com.holidaykeeper.service.HolidayDataService;
 import com.holidaykeeper.service.HolidayKeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HolidayController implements HolidayApi{
 
     private final HolidayKeeperService holidayKeeperService;
+    private final HolidayDataService holidayDataService;
 
     /**
      * 최근 5 년(2020 ~ 2025)의 공휴일을 외부 API에서 수집하여 저장하는 메서드
@@ -41,7 +44,7 @@ public class HolidayController implements HolidayApi{
     @DeleteMapping("/{countryCode}/{year}")
     public ResponseEntity<String> deleteHolidays(@PathVariable String countryCode, @PathVariable Integer year) {
         log.info("[HolidayController] Deleting holiday");
-        holidayKeeperService.delete(countryCode,year);
+        holidayDataService.delete(countryCode,year);
         log.info("[HolidayController] Deleted holiday");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
