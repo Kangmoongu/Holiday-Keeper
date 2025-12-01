@@ -1,5 +1,9 @@
 package com.holidaykeeper.repository;
 
-public interface HolidayRepository {
+import com.holidaykeeper.entity.Holiday;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface HolidayRepository extends JpaRepository<Holiday, UUID> {
 
 }

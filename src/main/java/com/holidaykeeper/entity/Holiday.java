@@ -1,6 +1,8 @@
 package com.holidaykeeper.entity;
 
+import com.holidaykeeper.mapper.StringListConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +26,7 @@ public class Holiday {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "holiday_id")
+    @Column(name = "id")
     private UUID id;
 
     @Column(name = "date")
@@ -50,13 +52,14 @@ public class Holiday {
     private String counties;
 
     @Column(name = "launch_year")
-    private Year launchYear;
+    private Integer launchYear;
 
     @Column(name = "types")
+    @Convert(converter = StringListConverter.class)
     private List<String> types;
 
     public Holiday(LocalDate date, String localName, String name, Country country, boolean fixed,
-        boolean global, String counties, Year launchYear, List<String> types) {
+        boolean global, String counties, Integer launchYear, List<String> types) {
         this.date = date;
         this.localName = localName;
         this.name = name;
@@ -69,7 +72,7 @@ public class Holiday {
     }
 
     public void update(LocalDate date, String localName, String name, Country country, boolean fixed,
-        boolean global, String counties, Year launchYear, List<String> types){
+        boolean global, String counties, Integer launchYear, List<String> types){
         this.date = date;
         this.localName = localName;
         this.name = name;

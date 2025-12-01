@@ -19,7 +19,7 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "country_id")
+    @Column(name = "id")
     private UUID id;
 
     @Column(name = "country_code")
