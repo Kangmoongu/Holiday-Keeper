@@ -63,7 +63,7 @@ public interface HolidayApi {
             )
         )
     })
-    ResponseEntity<String> deleteHolidays(
+    ResponseEntity<Void> deleteHolidays(
         @Parameter(description = "국가 코드", required = true, example = "KR")
         String countryCode,
         @Parameter(description = "연도 (2020~2025)", required = true, example = "2025")

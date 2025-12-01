@@ -42,9 +42,9 @@ public class HolidayController implements HolidayApi{
      */
     @Override
     @DeleteMapping("/{countryCode}/{year}")
-    public ResponseEntity<String> deleteHolidays(@PathVariable String countryCode, @PathVariable Integer year) {
+    public ResponseEntity<Void> deleteHolidays(@PathVariable String countryCode, @PathVariable Integer year) {
         log.info("[HolidayController] Deleting holiday");
-        holidayDataService.delete(countryCode,year);
+        holidayDataService.delete(countryCode, year);
         log.info("[HolidayController] Deleted holiday");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

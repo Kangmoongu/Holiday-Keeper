@@ -38,8 +38,8 @@ public class HolidayDataService {
      * @return 삭제한 레코드 갯수
      */
     @Transactional
-    public int delete(String countryCode, Integer year) {
-
+    public void delete(String countryCode, Integer year) {
+        log.info("[HolidayController] deleting holiday");
         // 삭제할 연도, 국가의 국가코드를 통해 검색하여 없을경우 예외 처리
         Country country = countryRepository.findByCountryCode(countryCode)
             .orElseThrow(CountryCodeNotFoundException::new);
@@ -52,7 +52,6 @@ public class HolidayDataService {
             .toList();
 
         holidayRepository.deleteAllById(deleteList);
-
-        return deleteList.size();
+        log.info("[HolidayController] CountryCode: {}, Deleted Record Size:{}",countryCode,deleteList.size());
     }
 }
