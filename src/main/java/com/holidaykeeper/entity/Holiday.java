@@ -49,7 +49,8 @@ public class Holiday {
     private boolean global;
 
     @Column(name = "counties")
-    private String counties;
+    @Convert(converter = StringListConverter.class)
+    private List<String> counties;
 
     @Column(name = "launch_year")
     private Integer launchYear;
@@ -59,7 +60,7 @@ public class Holiday {
     private List<String> types;
 
     public Holiday(LocalDate date, String localName, String name, Country country, boolean fixed,
-        boolean global, String counties, Integer launchYear, List<String> types) {
+        boolean global, List<String> counties, Integer launchYear, List<String> types) {
         this.date = date;
         this.localName = localName;
         this.name = name;
@@ -72,7 +73,7 @@ public class Holiday {
     }
 
     public void update(LocalDate date, String localName, String name, Country country, boolean fixed,
-        boolean global, String counties, Integer launchYear, List<String> types){
+        boolean global, List<String> counties, Integer launchYear, List<String> types){
         this.date = date;
         this.localName = localName;
         this.name = name;

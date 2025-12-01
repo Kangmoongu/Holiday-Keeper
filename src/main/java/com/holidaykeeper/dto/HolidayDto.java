@@ -10,7 +10,7 @@ public record HolidayDto(
     String countryCode,
     boolean fixed,
     boolean global,
-    String counties,
+    List<String> counties,
     Integer launchYear,
     List<String> types
 ){

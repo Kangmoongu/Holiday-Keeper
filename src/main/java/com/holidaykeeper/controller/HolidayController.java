@@ -26,9 +26,9 @@ public class HolidayController implements HolidayApi{
     @PostMapping("/save")
     public ResponseEntity<String> save() {
         log.info("[HolidayController] Saving holiday");
-        holidayKeeperService.save();
+        String result = holidayKeeperService.save();
         log.info("[HolidayController] Saved holiday");
-        return ResponseEntity.ok("Saved");
+        return ResponseEntity.ok(result);
     }
 
 }
