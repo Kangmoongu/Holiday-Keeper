@@ -1,11 +1,9 @@
-package com.holidaykeeper.dto;
+package com.holidaykeeper.dto.request;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
-public record HolidayDto(
-    UUID id,
+public record HolidaySaveRequest(
     LocalDate date,
     String localName,
     String name,
@@ -15,5 +13,7 @@ public record HolidayDto(
     List<String> counties,
     Integer launchYear,
     List<String> types
-){
+
+) {
+
 }
