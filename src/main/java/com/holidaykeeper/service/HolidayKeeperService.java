@@ -2,7 +2,7 @@ package com.holidaykeeper.service;
 
 import static java.time.Duration.between;
 
-import com.holidaykeeper.dto.HolidayDto;
+import com.holidaykeeper.dto.request.HolidaySaveRequest;
 import com.holidaykeeper.entity.Country;
 import com.holidaykeeper.entity.Holiday;
 import com.holidaykeeper.exception.CountryCodeNotFoundException;
@@ -110,11 +110,11 @@ public class HolidayKeeperService {
         return webClient.get()
             .uri("/PublicHolidays/{year}/{code}", year, country.getCountryCode())
             .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<List<HolidayDto>>() {})
-            .flatMap(holidayDtos -> {
+            .bodyToMono(new ParameterizedTypeReference<List<HolidaySaveRequest>>() {})
+            .flatMap(holidaySaveRequests -> {
 
                 // 데이터가 없을 경우 (일부 국가/년도의 API 응답 특성)
-                if (holidayDtos == null || holidayDtos.isEmpty()) {
+                if (holidaySaveRequests == null || holidaySaveRequests.isEmpty()) {
                     return Mono.empty();
                 }
 
@@ -125,8 +125,9 @@ public class HolidayKeeperService {
                 return Mono.fromCallable(() -> {
 
                     // DTO → 엔티티 변환
-                    List<Holiday> entities = holidayDtos.stream()
-                        .map(dto -> convert(dto, country))
+                    List<Holiday> entities = holidaySaveRequests.stream()
+                        .map(request -> new Holiday(request.date(), request.localName(), request.name(), country,
+                            request.fixed(), request.global(), request.counties(), request.launchYear(), request.types()))
                         .toList();
 
                     // 단건 트랜잭션으로 저장
@@ -152,21 +153,5 @@ public class HolidayKeeperService {
             .onErrorResume(e -> Mono.empty())
             .then();
     }
-
-    /**
-     * DTO → Holiday 엔티티 변환
-     */
-    private Holiday convert(HolidayDto dto, Country country) {
-        return new Holiday(
-            dto.date(),
-            dto.localName(),
-            dto.name(),
-            country,
-            dto.fixed(),
-            dto.global(),
-            dto.counties(),
-            dto.launchYear(),
-            dto.types()
-        );
-    }
+    
 }
