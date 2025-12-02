@@ -72,19 +72,6 @@ public class Holiday {
         this.types = types;
     }
 
-    public void update(LocalDate date, String localName, String name, Country country, boolean fixed,
-        boolean global, List<String> counties, Integer launchYear, List<String> types){
-        this.date = date;
-        this.localName = localName;
-        this.name = name;
-        this.country = country;
-        this.fixed = fixed;
-        this.global = global;
-        this.counties = counties;
-        this.launchYear = launchYear;
-        this.types = types;
-    }
-
     @Override
     public String toString() {
         return "Holiday{" +
