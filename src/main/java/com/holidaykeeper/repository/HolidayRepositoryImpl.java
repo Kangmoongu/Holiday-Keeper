@@ -45,7 +45,7 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
         LocalDate toDate, String holidayType, String nameLike) {
 
         log.info("[HolidayRepositoryImpl] Searching holidays");
-        OrderSpecifier<?> tieBreakerOrder = holiday.id.asc(); // 정렬순서가 정해지지 않을때는 항상 오름차순 (tie-breaker)
+        OrderSpecifier<?> tieBreakerOrder = holiday.id.asc(); // 이름 또는 기간이 동일하여 정렬순서가 정해지지 않을때를 대비해서 이름또는 기간이 동일할때는 id 오름차순으로 레코드를 보여줌 (tie-breaker)
         Order order = sortDirection.equals("ASC") ? Order.ASC : Order.DESC;
         List<Holiday> result = jpaQueryFactory.selectFrom(holiday)
             .where(
@@ -78,17 +78,21 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
         switch(sortBy){
             case "name":
                 if(order.equals(Order.ASC)){
-                    return holiday.name.goe(cursor);
+                    return holiday.name.gt(cursor)
+                        .or(holiday.name.eq(cursor).and(holiday.id.goe(idAfter)));
                 }
                 else{
-                    return holiday.name.loe(cursor);
+                    return holiday.name.loe(cursor)
+                        .or(holiday.name.eq(cursor).and(holiday.id.goe(idAfter)));
                 }
             case "date":
                 if(order.equals(Order.ASC)){
-                    return holiday.date.goe(LocalDate.parse(cursor));
+                    return holiday.date.goe(LocalDate.parse(cursor))
+                        .or(holiday.date.eq(LocalDate.parse(cursor)).and(holiday.id.goe(idAfter)));
                 }
                 else{
-                    return holiday.date.loe(LocalDate.parse(cursor));
+                    return holiday.date.loe(LocalDate.parse(cursor))
+                        .or(holiday.date.eq(LocalDate.parse(cursor)).and(holiday.id.goe(idAfter)));
                 }
             default:
                 return null;
