@@ -131,4 +131,41 @@ public interface HolidayApi {
         String nameLike
     );
 
+    @Operation(
+        summary = "공휴일 데이터 재동기화",
+        description = "특정 연도 및 국가의 공휴일 데이터를 외부 API에서 다시 가져와 업데이트 합니다."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "데이터 재동기화 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = String.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "재동기화 실패 (잘못된 요청)",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "재동기화 실패 (국가 또는 데이터 없음)",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    ResponseEntity<String> refreshHolidays(
+        @Parameter(description = "국가 코드", required = true, example = "KR")
+        String countryCode,
+        @Parameter(description = "연도 (2020~2025)", required = true, example = "2025")
+        Integer year
+    );
+
 }

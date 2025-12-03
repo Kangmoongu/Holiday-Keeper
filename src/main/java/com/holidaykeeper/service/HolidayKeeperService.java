@@ -9,12 +9,14 @@ import com.holidaykeeper.exception.CountryCodeNotFoundException;
 import com.holidaykeeper.repository.CountryRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -40,6 +42,7 @@ public class HolidayKeeperService {
      * - WebClient 비동기 호출로 외부 API 요청
      * - 받은 데이터를 blocking DB 저장용 스레드로 넘김
      * - 전체 작업 종료까지 blockLast()로 대기
+     * @return 저장 완료 및 통계 메세지
      */
     public String save() {
 
@@ -99,6 +102,12 @@ public class HolidayKeeperService {
      * - WebClient 호출 (비동기)
      * - 받은 데이터를 blocking DB 저장 스레드로 넘김
      * - 오류 발생 시 로그 기록 후 건너뜀
+     * @param country   조회할  국가
+     * @param year 조회할 년도
+     * @param totalSaved 총 저장된 데이터 수
+     * @param successCount 저장 성공한 데이터 수
+     * @param failCount 실패한 데이터 수
+     * @return Void
      */
     private Mono<Void> fetchAndSave(
         Country country,
@@ -153,5 +162,36 @@ public class HolidayKeeperService {
             .onErrorResume(e -> Mono.empty())
             .then();
     }
-    
+
+    /**
+     * 특정 연도·국가 데이터를 재호출하여 덮어쓰는 메서드
+     * @param countryCode 국가코드
+     * @param year 년도
+     * @return 저장 완료 및 통계 메세지
+     */
+    public String refreshHolidays(String countryCode, Integer year) {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        log.info("[HolidayKeeperService] Loading holidays countryCode: {}, year: {}", countryCode, year);
+
+        // 처리 대상 국가 목록 조회
+        Country country = countryRepository.findByCountryCode(countryCode)
+            .orElseThrow(CountryCodeNotFoundException::new);
+
+        // 저장/성공/실패 카운터
+        AtomicInteger totalSaved = new AtomicInteger();
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+       fetchAndSave(country, year, totalSaved, successCount, failCount)
+            .subscribeOn(Schedulers.boundedElastic())
+            .block();
+
+        long seconds = between(startTime, LocalDateTime.now()).getSeconds();
+
+        return String.format(
+            "%s 국가, %d개 공휴일 저장 완료 (성공: %d, 실패: %d, 소요시간: %d초)",
+            countryCode, totalSaved.get(), successCount.get(), failCount.get(), seconds
+        );
+    }
 }

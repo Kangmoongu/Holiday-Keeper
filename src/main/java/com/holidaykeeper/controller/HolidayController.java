@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +44,9 @@ public class HolidayController implements HolidayApi{
 
     /**
      * 특정 연도·국가의 공휴일 레코드 전체 삭제
-     * @return 삭제 완료 메시지
+     * @param countryCode 국가코드
+     * @param year 삭제할 년도
+     * @return Void
      */
     @Override
     @DeleteMapping("/{countryCode}/{year}")
@@ -68,6 +72,7 @@ public class HolidayController implements HolidayApi{
      * @return 페이징 된 응답
      */
     @Override
+    @GetMapping
     public ResponseEntity<HolidayPageResponse> searchHolidays(
         @RequestParam(required = false) String cursor,
         @RequestParam(required = false) UUID idAfter,
@@ -86,4 +91,23 @@ public class HolidayController implements HolidayApi{
         return ResponseEntity.status(HttpStatus.OK)
             .body(response);
     }
+
+    /**
+     * 특정 연도·국가 데이터를 재호출
+     * @param countryCode 재호출할 국가코드
+     * @param year 재호출할 년도
+     * @return 저장성공시 완료 안내메시지
+     */
+    @Override
+    @PatchMapping("/{countryCode}/{year}")
+    public ResponseEntity<String> refreshHolidays(
+        @PathVariable String countryCode,
+        @PathVariable Integer year) {
+        log.info("[holidayController] Refreshing holiday]");
+        String result = holidayKeeperService.refreshHolidays(countryCode, year);
+        log.info("[holidayController] Refreshed holiday]");
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(result);
+    }
+
 }
