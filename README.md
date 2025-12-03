@@ -201,7 +201,6 @@ http://localhost:8080/swagger-ui.html
 http://localhost:8080/api-docs
 ```
 
-Swagger UI에서 직접 API를 테스트할 수 있습니다.
 
 ## 기술 스택
 
