@@ -77,19 +77,19 @@ GET /api/holidays
 
 **요청 예시**
 ```http
-한국의 2024년 공휴일 조회 (날짜 오름차순, 20개씩)
+ 한국의 2024년 공휴일 조회 (날짜 오름차순, 20개씩)
 GET /api/holidays?countryCode=KR&fromDate=2024-01-01&toDate=2024-12-31&size=20&sortBy=date&sortDirection=ASC
 
-'Christmas' 키워드로 검색 (이름 오름차순, 10개씩)
+ 'Christmas' 키워드로 검색 (이름 오름차순, 10개씩)
 GET /api/holidays?nameLike=Christmas&size=10&sortBy=name&sortDirection=ASC
 
-2024년 12월의 모든 공휴일 (날짜 기준)
+ 2024년 12월의 모든 공휴일 (날짜 기준)
 GET /api/holidays?fromDate=2024-12-01&toDate=2024-12-31&size=20&sortBy=date&sortDirection=ASC
 
-Public 타입 공휴일만 조회
+ Public 타입 공휴일만 조회
 GET /api/holidays?holidayType=Public&size=20&sortBy=date&sortDirection=ASC
 
-다음 페이지 조회 (cursor와 idAfter는 이전 응답에서 제공)
+ 다음 페이지 조회 (cursor와 idAfter는 이전 응답에서 제공)
 GET /api/holidays?countryCode=KR&size=20&sortBy=date&sortDirection=ASC&cursor=xxx&idAfter=xxx
 ```
 
