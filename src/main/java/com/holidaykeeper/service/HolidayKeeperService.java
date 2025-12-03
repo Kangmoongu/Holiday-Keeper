@@ -194,4 +194,34 @@ public class HolidayKeeperService {
             countryCode, totalSaved.get(), successCount.get(), failCount.get(), seconds
         );
     }
+
+    /**
+     * 해당 연도의 모든 국가 공휴일 전체 갱신 (배치 자동화를 위한 메서드)
+     * @param year 해당연도
+     */
+    public String refreshYearForAllCountries(int year) {
+
+        List<Country> countries = countryRepository.findAll();
+        if (countries.isEmpty()) {
+            log.warn("[HolidayKeeperService] 국가 정보가 없어 연도 갱신을 종료합니다.");
+            return "국가 정보가 없어 연도 갱신을 종료합니다.";
+        }
+
+        AtomicInteger totalSaved = new AtomicInteger();
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+        Flux.fromIterable(countries)
+            .flatMap(country ->
+                    fetchAndSave(country, year, totalSaved, successCount, failCount),
+                CONCURRENCY
+            )
+            .subscribeOn(Schedulers.boundedElastic())
+            .blockLast();
+
+        return String.format(
+            "총 %d개 국가, %d개 공휴일 저장 완료 (성공: %d, 실패: %d)",
+            countries.size(), totalSaved.get(), successCount.get(), failCount.get()
+        );
+    }
 }
