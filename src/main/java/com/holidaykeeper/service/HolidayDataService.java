@@ -66,6 +66,20 @@ public class HolidayDataService {
             deleteList.size());
     }
 
+    /**
+     * 커서 페이지네이션을 통해 검색된 공휴일 결과를 반환하는 메서드
+     * @param cursor 커서
+     * @param idAfter 다음 페이지 첫번째 항목의 UUID
+     * @param size 한 페이지가 가지는 user의 수
+     * @param sortBy 정렬자
+     * @param sortDirection 정렬 방향
+     * @param countryCode 국가 코드
+     * @param fromDate 검색 시간(~부터)
+     * @param toDate (~까지)
+     * @param holidayType 공휴일 타입
+     * @param nameLike 해당 단어가 포함된 공휴일 검색
+     * @return 페이지네이션으로 검색된 공휴일 리스트 및 다음 커서 인덱스
+     */
     @Transactional(readOnly = true)
     public HolidayPageResponse search(String cursor, UUID idAfter,
         String countryCode, LocalDate fromDate, LocalDate toDate, String holidayType, Integer size,
@@ -84,7 +98,7 @@ public class HolidayDataService {
         UUID nextIdAfter = null;
         if(hasNext) {
             // 마지막 인덱스 추출(다음)
-            HolidayDto holidayDto = allByCursor.get(allByCursor.size() - 1);
+            HolidayDto holidayDto = allByCursor.getLast();
 
             // 다음 인덱스 UUID
             nextIdAfter = holidayDto.id();
@@ -102,9 +116,12 @@ public class HolidayDataService {
         Long totalCount = holidayRepositoryCustom.countHolidays(countryCode, fromDate, toDate, holidayType, nameLike);
 
         // 다음 페이지가 존재할 때만 limit+1을 검색했기때문에 마지막 인덱스 제거
-        if(hasNext) allByCursor.remove(allByCursor.size() - 1);
+        if(hasNext) allByCursor.removeLast();
 
         log.info("[HolidayController] Searched Record Size:{}", totalCount);
         return new HolidayPageResponse(allByCursor,nextCursor,nextIdAfter,hasNext,totalCount,sortBy,sortDirection);
     }
+
+
+
 }
