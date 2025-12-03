@@ -4,7 +4,9 @@ import com.holidaykeeper.entity.Holiday;
 import com.holidaykeeper.entity.QHoliday;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -52,7 +54,8 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
                 buildCursorCondition(cursor, idAfter, order, sortBy),
                 countryCodeCondition(countryCode),
                 dateCondition(fromDate,toDate),
-                nameLikeCondition(nameLike)
+                nameLikeCondition(nameLike),
+                holidayTypeCondition(holidayType)
             )
             .orderBy(buildOrderSpecifier(sortBy, order),tieBreakerOrder)
             .limit(size)
@@ -62,6 +65,7 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
         return result;
 
     }
+
 
     /**
      * 커서를 기준으로 검색범위를 지정하는 메서드
@@ -138,7 +142,8 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
             .where(
                 countryCodeCondition(countryCode),
                 dateCondition(fromDate,toDate),
-                nameLikeCondition(nameLike)
+                nameLikeCondition(nameLike),
+                holidayTypeCondition(holidayType)
             ).fetchOne();
         log.info("[HolidayRepositoryImpl] Counted holidays: {}", result);
         return result;
@@ -180,5 +185,20 @@ public class HolidayRepositoryImpl implements HolidayRepositoryCustom{
             return null;
         }
         return holiday.name.likeIgnoreCase("%" + nameLike + "%");
+    }
+
+
+    /**
+     * 해당 공휴일 타입을 포함하는 공휴일을 검색
+     * @param holidayType 찾고자하는 공휴일 타입
+     * @return 해당되는 타입의 공휴일
+     */
+    private BooleanExpression holidayTypeCondition(String holidayType) {
+        if(holidayType == null || holidayType.isBlank()){
+            return null;
+        }
+
+        return holiday.types.likeIgnoreCase("%" + holidayType + "%");
+
     }
 }
