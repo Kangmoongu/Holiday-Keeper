@@ -1,8 +1,6 @@
 package com.holidaykeeper.entity;
 
-import com.holidaykeeper.mapper.StringListConverter;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
